@@ -9,20 +9,26 @@ namespace ShareMarket.Models
 	[Serializable]
 	public class User
 	{
-		public int Id { get; set; }
+        public int Id { get; set; }
 		public string Name { get; set; }
 		public string Email { get; set; }
 		public string Username { get; set; }
 		public string Password { get; set; }
 		public bool IsActive { get; set; }
 
+        public User()
+        {
+          
+        }
+
 		public User(params object[] reader)
 		{
-			Id =Convert.ToInt32(reader[0]);
-			Name = reader[1].ToString();
+
+			Name = reader[0].ToString();
+			Email = reader[1].ToString();
 			Username = reader[2].ToString();
 			Password= reader[3].ToString();
-			IsActive = Convert.ToBoolean(true);
+			IsActive = Convert.ToBoolean(reader[4]);
 		}
 	}
 }

@@ -7,7 +7,9 @@
 	IsActive bit default(0)
 	);
 
-Insert into Users([Name],Email,[Password],Username, IsActive) values('Paras','parasrawat67@gmail.com','parasrawat007','ghf007',1);
+Insert into Users(
+[Name],Email,[Password],Username, IsActive) 
+values('Paras','parasrawat67@gmail.com','parasrawat007','ghf007',1)
 
 Create procedure USP_GetUsers
 As
@@ -30,3 +32,12 @@ as
 	Insert into Users([Name],Email,[Password],Username ,IsActive) 
 	Values(@Name,@Email,@Password,@Username,@IsActive)
 return
+
+exec USP_GetUsers
+
+exec USP_CreateUser
+	@Name ='Hexa',
+	@Email ='Hexa@gmai.com',
+	@Password ='Hex',
+	@username ='Hex',
+	@IsActive=true

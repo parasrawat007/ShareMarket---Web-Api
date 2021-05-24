@@ -1,9 +1,5 @@
 ﻿using ShareMarket.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Data.SqlClient;
 using System.Data;
@@ -23,7 +19,7 @@ namespace ShareMarket.Controllers.Api
         //    con.Close();
         //}
         //GET api/Users
-        public IEnumerable<User> GetUsers()
+        public IHttpActionResult GetUsers()
         {
             List<User> Users = new List<User>();
             using (con = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = D:\1\OfficePro\ShareMarket\ShareMarket\App_Data\Database1.mdf; Integrated Security = True"))
@@ -37,75 +33,38 @@ namespace ShareMarket.Controllers.Api
 
                 while (reader.Read())
                 {
-                    Users.Add(new User(reader[0],reader[1],reader[2],reader[3],reader[4]));
+                    Users.Add(new User(reader[0],reader[1],reader[2],reader[3],reader[4],reader[5]));
                 }
                 con.Close();
             }
            
-            return Users.AsEnumerable();
+            return Ok(Users);
         }
-        [HttpPost]
-        public User CreateUsers(User user)
-        {
 
-            if(!ModelState.IsValid)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+        [HttpPost]
+        public IHttpActionResult CreateUsers(User user)
+        {
             using (con = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = D:\1\OfficePro\ShareMarket\ShareMarket\App_Data\Database1.mdf; Integrated Security = True"))
             {
                 SqlCommand cmd = new SqlCommand("USP_CreateUser", con)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-
-                SqlParameter Name = new SqlParameter()
-                {
-                    ParameterName="@Name",
-                    Value=user.Name,
-                    Direction=ParameterDirection.Input
-                };
-                SqlParameter Email = new SqlParameter()
-                {
-                    ParameterName = "@Email",
-                    Value = user.Email,
-                    Direction = ParameterDirection.Input
-                };
-                SqlParameter Username = new SqlParameter()
-                {
-                    ParameterName = "@Username",
-                    Value = user.Username,
-                    Direction = ParameterDirection.Input
-                };
-                SqlParameter Password = new SqlParameter()
-                {
-                    ParameterName = "@Password",
-                    Value = user.Password,
-                    Direction = ParameterDirection.Input
-                };
-                SqlParameter IsActive = new SqlParameter()
-                {
-                    ParameterName = "@IsActive",
-                    Value = user.IsActive,
-                    Direction = ParameterDirection.Input
-                };
-                cmd.Parameters.Add(Name);
-                cmd.Parameters.Add(Email);
-                cmd.Parameters.Add(Username);
-                cmd.Parameters.Add(Password);
-                cmd.Parameters.Add(IsActive);
-
-
                 con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
 
-                user =new User(reader[0], reader[1], reader[2], reader[3], reader[4]);
-                
-            
+                cmd.Parameters.AddWithValue("@Name",user.Name.ToString());
+                cmd.Parameters.AddWithValue("@Email",user.Email.ToString());
+                cmd.Parameters.AddWithValue("@username",user.Username.ToString());
+                cmd.Parameters.AddWithValue("@Password",user.Password.ToString());
+                cmd.Parameters.AddWithValue("@IsActive",user.IsActive.ToString());
+
+
+                cmd.ExecuteNonQuery();
+
                 con.Close();
             }
 
-            return user;
+            return Ok(user);
         }
     }
 }
